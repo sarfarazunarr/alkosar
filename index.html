@@ -1,62 +1,39 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Alkosar - Something amazing is coming. Stay tuned.">
-    <title>Alkosar | Coming Soon</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alkosar Institute</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'media', // or 'class' if you want manual control
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif'],
+            display: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            primary: '#3b82f6',
+            secondary: '#8b5cf6',
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
 <body>
-    <div class="background-globes">
-        <div class="globe globe-1"></div>
-        <div class="globe globe-2"></div>
-    </div>
-
-    <div class="noise-overlay"></div>
-
-    <main class="container">
-        <header class="fade-in-up" style="animation-delay: 0.2s;">
-            <div class="logo">Tution Center</div>
-        </header>
-
-        <section class="content">
-            <h1 class="fade-in-up" style="animation-delay: 0.4s;">
-                Al Kosar <br>
-                <span class="highlight">Computer Center</span>
-            </h1>
-            <p class="subtitle fade-in-up" style="animation-delay: 0.6s;">
-                Empowering the next generation of tech leaders through quality education and innovation. <br>
-                Stay tuned as we prepare to launch our digital learning platform.
-            </p>
-
-            <form class="notify-form fade-in-up" style="animation-delay: 0.8s;" onsubmit="event.preventDefault();">
-                <div class="input-group">
-                    <input type="email" placeholder="Enter your email address" required>
-                    <button type="submit">Notify Me</button>
-                </div>
-            </form>
-        </section>
-
-        <footer class="fade-in-up" style="animation-delay: 1.0s;">
-            <div class="socials">
-                <a href="#" aria-label="Twitter">Twitter</a>
-                <a href="#" aria-label="Instagram">Instagram</a>
-                <a href="#" aria-label="LinkedIn">LinkedIn</a>
-            </div>
-            <p class="copyright">&copy; 2024 Alkosar. All rights reserved.</p>
-        </footer>
-    </main>
-
-    <div class="cursor-light"></div>
-    <script src="script.js"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 
 </html>
