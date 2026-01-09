@@ -11,9 +11,12 @@ const Navbar = () => {
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <div className="flex-shrink-0 flex items-center">
-                        <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-display">
-                            Alkosar
+                    <div className="flex-shrink-0 flex items-center gap-3">
+                        <Link to="/" className="flex items-center gap-2">
+                            <img src="/logo.jpeg" alt="Alkosar Logo" className="h-10 w-10 rounded-full object-cover border-2 border-blue-500" />
+                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-display">
+                                Alkosar
+                            </span>
                         </Link>
                     </div>
                     <div className="hidden md:flex space-x-8 items-center">

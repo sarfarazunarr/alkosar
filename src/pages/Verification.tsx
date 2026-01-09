@@ -22,6 +22,9 @@ const Verification = () => {
             >
                 <div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-zinc-800">
                     <div className="p-8 text-center">
+                        <div className="flex justify-center mb-6">
+                            <img src="/logo.jpeg" alt="Alkosar Logo" className="h-20 w-20 rounded-full object-cover shadow-lg border-4 border-white dark:border-zinc-800" />
+                        </div>
                         <h2 className="text-3xl font-bold mb-2 font-display">Verify Certificate</h2>
                         <p className="text-gray-600 dark:text-gray-400 mb-8">Enter the unique certificate ID to verify authenticity.</p>
 
