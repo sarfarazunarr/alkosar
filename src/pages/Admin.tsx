@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
-import { addCertificate, fetchAllCertificates, type Certificate } from '../lib/api';
+import { useState, useEffect, useRef } from 'react';
+import { addCertificate, fetchAllCertificates, deleteCertificate, type Certificate } from '../lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlusCircle, Lock, Loader2, QrCode, X, RefreshCcw } from 'lucide-react';
+import { PlusCircle, Lock, Loader2, QrCode, X, RefreshCcw, Trash2, Download } from 'lucide-react';
 import QRCode from 'react-qr-code';
+import { toPng } from 'html-to-image';
 
 const Admin = () => {
     const [auth, setAuth] = useState(false);
@@ -14,10 +15,10 @@ const Admin = () => {
     const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
     const [form, setForm] = useState({
-        certificateNo: '',
+        certificateNo: 'CIT',
         studentName: '',
         fatherName: '',
-        duration: '',
+        duration: '6 Months',
         completionDate: '',
         status: 'Completed'
     });
@@ -28,6 +29,7 @@ const Admin = () => {
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [listLoading, setListLoading] = useState(false);
     const [showQRCode, setShowQRCode] = useState<string | null>(null); // Holds cert ID
+    const qrRef = useRef<HTMLDivElement>(null);
 
     // Initial fetch if auth is true (development or re-auth)
     useEffect(() => {
@@ -83,6 +85,41 @@ const Admin = () => {
             setMessage({ type: 'error', text: "An unexpected error occurred." });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async (certNo: string) => {
+        if (!confirm(`Are you sure you want to delete certificate #${certNo}?`)) return;
+
+        setListLoading(true);
+        try {
+            const result = await deleteCertificate(certNo);
+            if (result.success) {
+                setMessage({ type: 'success', text: "Certificate deleted successfully" });
+                loadCertificates();
+            } else {
+                alert("Failed to delete: " + result.message);
+            }
+        } catch (e) {
+            alert("Error deleting certificate");
+        } finally {
+            setListLoading(false);
+        }
+    };
+
+    const downloadQRCode = async () => {
+        if (qrRef.current === null) {
+            return;
+        }
+
+        try {
+            const dataUrl = await toPng(qrRef.current, { cacheBust: true, backgroundColor: 'white' });
+            const link = document.createElement('a');
+            link.download = `certificate-${showQRCode}-qr.png`;
+            link.href = dataUrl;
+            link.click();
+        } catch (err) {
+            console.error('Could not download QR code', err);
         }
     };
 
@@ -220,12 +257,20 @@ const Admin = () => {
                                                     {cert.status}
                                                 </span>
                                             </td>
-                                            <td className="p-4">
+                                            <td className="p-4 flex gap-2">
                                                 <button
                                                     onClick={() => setShowQRCode(cert.certificateNo)}
-                                                    className="text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1"
+                                                    className="p-1.5 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                                                    title="View QR"
                                                 >
-                                                    <QrCode size={16} /> QR
+                                                    <QrCode size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(cert.certificateNo)}
+                                                    className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={18} />
                                                 </button>
                                             </td>
                                         </tr>
@@ -258,15 +303,25 @@ const Admin = () => {
                                 <h3 className="text-2xl font-bold mb-2">Certificate QR Code</h3>
                                 <p className="text-gray-500 mb-6">Scan to verify Certificate #{showQRCode}</p>
 
-                                <div className="bg-white p-4 rounded-xl border border-gray-200 inline-block mb-6">
+                                <div ref={qrRef} className="bg-white p-6 rounded-xl border border-gray-200 inline-block mb-6">
                                     <QRCode
                                         value={`${currentUrl}/certificate/${showQRCode}`}
                                         size={200}
                                         viewBox={`0 0 256 256`}
                                     />
                                 </div>
-                                <div className="break-all text-xs text-blue-500 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
-                                    {`${currentUrl}/certificate/${showQRCode}`}
+
+                                <div className="flex flex-col gap-3">
+                                    <div className="break-all text-xs text-blue-500 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
+                                        {`${currentUrl}/certificate/${showQRCode}`}
+                                    </div>
+                                    <button
+                                        onClick={downloadQRCode}
+                                        className="flex items-center justify-center gap-2 w-full py-2 bg-gray-100 hover:bg-gray-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 rounded-lg font-medium transition-colors"
+                                    >
+                                        <Download size={18} />
+                                        Download QR Image
+                                    </button>
                                 </div>
                             </div>
                         </motion.div>

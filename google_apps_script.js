@@ -46,28 +46,53 @@ function doGet(e) {
 
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const action = e.parameter ? e.parameter.action : "add"; // default to add if unspecified
 
   try {
     const data = JSON.parse(e.postData.contents);
 
-    // Append new certificate
-    // Columns: Certificate No, Student Name, Father Name, Duration, Completion Date, Status
-    sheet.appendRow([
-      data.certificateNo,
-      data.studentName,
-      data.fatherName,
-      data.duration,
-      data.completionDate,
-      data.status
-    ]);
+    if (action === "delete") {
+      return deleteCertificate(sheet, data.certificateNo);
+    }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Certificate added" }))
+    // Add logic
+    if (action === "add") {
+      // Append new certificate
+      // Columns: Certificate No, Student Name, Father Name, Duration, Completion Date, Status
+      sheet.appendRow([
+        data.certificateNo,
+        data.studentName,
+        data.fatherName,
+        data.duration,
+        data.completionDate,
+        data.status
+      ]);
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Certificate added" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Invalid action" }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function deleteCertificate(sheet, certNo) {
+  const data = sheet.getDataRange().getValues();
+  // Loop through rows to find the certificate
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]).toLowerCase() === String(certNo).toLowerCase()) {
+      // Delete the row (i + 1 because rows are 1-indexed in Apps Script)
+      sheet.deleteRow(i + 1);
+      return ContentService.createTextOutput(JSON.stringify({ status: "success", message: "Certificate deleted" }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Certificate not found" }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function searchCertificate(sheet, certNo) {

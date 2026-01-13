@@ -71,3 +71,25 @@ export async function addCertificate(cert: Certificate): Promise<{ success: bool
         return { success: false, message: error.toString() };
     }
 }
+
+export async function deleteCertificate(certificateNo: string): Promise<{ success: boolean; message: string }> {
+    if (!API_URL) {
+        return { success: false, message: "API Configuration Missing" };
+    }
+
+    try {
+        const response = await fetch(`${API_URL}?action=delete`, {
+            method: "POST",
+            body: JSON.stringify({ certificateNo }),
+        });
+
+        const result = await response.json();
+        if (result.status === "success") {
+            return { success: true, message: "Deleted successfully" };
+        }
+        return { success: false, message: result.message || "Unknown error" };
+    } catch (error: any) {
+        console.error("Error deleting certificate", error);
+        return { success: false, message: error.toString() };
+    }
+}
